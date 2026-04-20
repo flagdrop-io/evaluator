@@ -2,6 +2,22 @@
   "name": "@flagdrop/evaluator",
   "version": "1.0.0",
   "description": "Lightweight flag evaluation library for FlagDrop config files",
+  "keywords": [
+    "feature-flags",
+    "feature-toggle",
+    "flagdrop",
+    "rollout",
+    "targeting",
+    "openfeature"
+  ],
+  "homepage": "https://github.com/flagdrop-io/evaluator#readme",
+  "bugs": {
+    "url": "https://github.com/flagdrop-io/evaluator/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flagdrop-io/evaluator.git"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
