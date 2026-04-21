@@ -1,18 +1,24 @@
+import murmurhash3 from 'murmurhash3js';
+
 /**
- * FNV-1a hash (32-bit) — fast, deterministic, good distribution for bucketing.
- * Matches the approach referenced in platform models (MurmurHash3 comment,
- * but FNV-1a is simpler and sufficient for percentage bucketing).
+ * Deterministic bucketing via MurmurHash3 (32-bit, x86 variant).
+ *
+ * Returns a number 0-99 inclusive. The hash input is
+ * `flagKey + String(attributeValue)` — identical format to every FlagDrop
+ * SDK (Node, browser, React, Vue) and the Go backend, so the same user is
+ * bucketed to the same value everywhere a flag is evaluated.
+ *
+ * This is the canonical bucketing algorithm for FlagDrop. Any evaluator —
+ * wherever it lives — must produce identical output for this function given
+ * the same inputs. A parity change here is a breaking change for every
+ * rolled-out user and requires a major version bump.
  */
-export function fnv1aHash(input: string): number {
-  let hash = 0x811c9dc5; // FNV offset basis
-  for (let i = 0; i < input.length; i++) {
-    hash ^= input.charCodeAt(i);
-    // FNV prime: multiply by 16777619
-    // Use Math.imul for correct 32-bit multiplication
-    hash = Math.imul(hash, 0x01000193);
-  }
-  // Convert to unsigned 32-bit integer
-  return hash >>> 0;
+export function bucketUser(
+  flagKey: string,
+  attributeValue: string | number | boolean,
+): number {
+  const hash = murmurhash3.x86.hash32(flagKey + String(attributeValue));
+  return Math.abs(hash) % 100;
 }
 
 /**
@@ -32,8 +38,5 @@ export function isInRollout(
 ): boolean {
   if (percentage <= 0) return false;
   if (percentage >= 100) return true;
-
-  const hash = fnv1aHash(flagKey + String(attributeValue));
-  const bucket = hash % 100;
-  return bucket < percentage;
+  return bucketUser(flagKey, attributeValue) < percentage;
 }
