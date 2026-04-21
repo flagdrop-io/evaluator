@@ -1,6 +1,6 @@
 {
   "name": "@flagdrop/evaluator",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Lightweight flag evaluation library for FlagDrop config files",
   "keywords": [
     "feature-flags",
@@ -37,6 +37,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "murmurhash3js": "^3.0.1"
   },
   "devDependencies": {
     "tsup": "^8.0.0",

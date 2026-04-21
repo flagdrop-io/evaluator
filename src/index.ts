@@ -1,6 +1,6 @@
 export { evaluateFlag } from './evaluate';
 export { matchRule } from './rules';
-export { isInRollout, fnv1aHash } from './rollout';
+export { isInRollout, bucketUser } from './rollout';
 export type {
   ConfigFile,
   ConfigFlag,

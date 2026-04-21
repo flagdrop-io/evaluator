@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { evaluateFlag } from '../src/evaluate';
 import { matchRule } from '../src/rules';
-import { isInRollout, fnv1aHash } from '../src/rollout';
+import { isInRollout, bucketUser } from '../src/rollout';
 import type { ConfigFile, Rule, UserContext } from '../src/types';
 
 // ============================================================================
@@ -134,8 +134,6 @@ describe('evaluateFlag', () => {
   });
 
   it('handles rollout — user in bucket', () => {
-    // We need to find a userId that lands in the bucket for 50%
-    // fnv1aHash('gradual-rollout' + 'user-in') % 100 should be < 50
     const config = makeConfig({
       'gradual-rollout': {
         type: 'boolean',
@@ -364,16 +362,16 @@ describe('matchRule', () => {
 // ============================================================================
 
 describe('rollout', () => {
-  it('fnv1aHash is deterministic', () => {
-    const h1 = fnv1aHash('test-flag-user123');
-    const h2 = fnv1aHash('test-flag-user123');
-    expect(h1).toBe(h2);
+  it('bucketUser is deterministic', () => {
+    const b1 = bucketUser('test-flag', 'user123');
+    const b2 = bucketUser('test-flag', 'user123');
+    expect(b1).toBe(b2);
   });
 
-  it('fnv1aHash produces different values for different inputs', () => {
-    const h1 = fnv1aHash('test-flag-user123');
-    const h2 = fnv1aHash('test-flag-user456');
-    expect(h1).not.toBe(h2);
+  it('bucketUser produces different values for different inputs', () => {
+    const b1 = bucketUser('test-flag', 'user123');
+    const b2 = bucketUser('test-flag', 'user456');
+    expect(b1).not.toBe(b2);
   });
 
   it('isInRollout returns true for 100%', () => {
